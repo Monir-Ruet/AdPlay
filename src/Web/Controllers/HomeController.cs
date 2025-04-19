@@ -1,5 +1,4 @@
 using Application.Services;
-using Domain.Abstraction;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Web.Controllers;
@@ -9,14 +8,20 @@ namespace Web.Controllers;
 public class HomeController(IHomeService homeService) : ControllerBase
 {
     [HttpGet]
-    public IActionResult Unique_String()
+    public IActionResult UniqueString()
     {
         return Ok(Guid.NewGuid().ToString());
     }
     
     [HttpGet]
-    public IActionResult Get_Payment_Json()
+    public IActionResult GetPaymentJson()
     {
-        return Ok(homeService.Get_Payment_Json().Value);
+        return Ok(homeService.GetPaymentJson().Value);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> CreateCheckOutUrl()
+    {
+        return Ok(await homeService.CreateCheckOutUrl());
     }
 }

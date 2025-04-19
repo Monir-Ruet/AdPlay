@@ -5,5 +5,6 @@ namespace Application.Services;
 
 public interface IHomeService
 {
-    Result<Payment> Get_Payment_Json();
+    Result<Payment> GetPaymentJson();
+    Task<Result> CreateCheckOutUrl();
 }

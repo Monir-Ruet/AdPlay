@@ -5,5 +5,6 @@ namespace Domain.Repository;
 
 public interface IHomeRepository
 {
-    Result<Payment> Get_Payment_Json();
+    Result<Payment> GetPaymentJson();
+    Task<Result> CreateCheckOutUrl(Payment payment);
 }

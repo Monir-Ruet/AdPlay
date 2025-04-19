@@ -1,3 +1,5 @@
+using System.Text;
+using System.Text.Json;
 using Domain.Abstraction;
 using Domain.Entities;
 using Domain.Enums;
@@ -7,7 +9,7 @@ namespace Infrastructure.Repository;
 
 public class HomeRepository : IHomeRepository
 {
-    public Result<Payment> Get_Payment_Json()
+    public Result<Payment> GetPaymentJson()
     {
         List<string> redirectUrls =
         [
@@ -35,5 +37,26 @@ public class HomeRepository : IHomeRepository
             MerchantShortCode = Guid.NewGuid().ToString(),
             RedirectUrl = redirectUrls[new Random().Next(0, redirectUrls.Count)]
         });
+    }
+
+    public async Task<Result> CreateCheckOutUrl(Payment payment)
+    {
+        try
+        {
+            var httpClient = new HttpClient();
+            var checkOutEndPointUrl = "https://bkashtest.shabox.mobi/home/MultiTournamentInBuildCheckoutUrl";
+            var json = JsonSerializer.Serialize(payment);
+            using var data = new StringContent(json, Encoding.UTF8, "application/json");
+            using var request = new HttpRequestMessage(HttpMethod.Post, checkOutEndPointUrl);
+            request.Content = data;
+            request.Headers.Add("api-key", "796b8b9dbbf46b1d8fd73f68979ae31635da9afabc9dee147adf0440ee7118a8");
+            var httpResponse = await httpClient.SendAsync(request);
+
+            return httpResponse.IsSuccessStatusCode ? Result.Success(await httpResponse.Content.ReadAsStringAsync()) : Result.Failure("Http request failed");
+        }
+        catch (Exception ex)
+        {
+            return Result.Failure(ex.Message);
+        }
     }
 }
